@@ -95,35 +95,51 @@ window.addEventListener('DOMContentLoaded', function() {
     
     //modal
 
+    function openModal() {
+        modal.classList.add("show");
+        modal.classList.remove("hide");
+        document.body.style.overflow = "hidden";
+        clearInterval(modalTimerId);
+    }
+
+
     const modalTrigger = document.querySelectorAll("[data-modal]"),
           modal = document.querySelector(".modal"),
           modalCloseBtn = document.querySelector("[data-close]");
 
         modalTrigger.forEach(function(item) {
-                item.addEventListener("click", function() {
-                    modal.classList.add("show");
-                    modal.classList.remove("hide");
-                    document.body.style.overflow = "hidden";
-                });
+            item.addEventListener("click", openModal);
         });
 
-        function closeModal() {
-            modal.classList.add("hide");
-            modal.classList.remove("show");
-            document.body.style.overflow = "";
+    function closeModal() {
+        modal.classList.add("hide");
+        modal.classList.remove("show");
+        document.body.style.overflow = "";
+    }
+
+    modalCloseBtn.addEventListener("click", closeModal);
+
+    modal.addEventListener("click", function(e) {
+        if (e.target === modal) {
+            closeModal();
         }
+    });
 
-        modalCloseBtn.addEventListener("click", closeModal);
+    document.addEventListener("keydown", (e) => {
+        if (e.code === "Escape" && modal.classList.contains("show")) {
+            closeModal();
+        }
+    });
 
-        modal.addEventListener("click", function(e) {
-            if (e.target === modal) {
-                closeModal();
+    const modalTimerId = setTimeout(openModal, 5000);
+
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.
+            documentElement.scrollHeight) {
+                openModal();
+                window.removeEventListener("scroll", showModalByScroll);
             }
-        });
+    }
 
-        document.addEventListener("keydown", (e) => {
-            if (e.code === "Escape" && modal.classList.contains("show")) {
-                closeModal();
-            }
-        });
+    window.addEventListener("scroll", showModalByScroll);
 });
